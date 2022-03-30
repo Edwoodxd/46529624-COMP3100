@@ -26,17 +26,17 @@ import java.net.*;
 			
 			
 			
-			while(serverMsg != "NONE"){
-				dout.write(("REDY\n").getBytes());
+			while(serverMsg.contains("NONE")){
+				dout.write(("REDY\n").getBytes()); //Receive Job
 				serverMsg = (String)in.readLine();
 				System.out.println(serverMsg);
-				strings = serverMsg.split(" ");
+				strings = serverMsg.split(" "); //Split into strings to to get values
 				
-				while(serverMsg.contains("JCPL")) { 
+				while(serverMsg.contains("JCPL")) { //Check if JCPL or JOBN are received
 					dout.write(("REDY\n").getBytes());
 					serverMsg = (String)in.readLine();
 				}
-				if(serverMsg.contains("NONE")) { break; }
+				if(serverMsg.contains("NONE")) { break; } //Break when no jobs left
 				strings = serverMsg.split(" ");
 				dout.write(("GETS Capable " + strings[4] + " " + strings[5] + " " + strings[6] + "\n").getBytes()); //Checking available servers
 				serverMsg = (String)in.readLine();
@@ -58,20 +58,18 @@ import java.net.*;
 				serverMsg = (String)in.readLine();
 				System.out.println(serverMsg);
 				
-				dout.write(("SCHD " + iterate + " super-silk 0\n").getBytes());
+				dout.write(("SCHD " + iterate + " super-silk 0\n").getBytes()); //Schedule Job
 				serverMsg = (String)in.readLine();
 				System.out.println(serverMsg);
 				
-				while(!(serverMsg.contains("OK"))){
+				while(!(serverMsg.contains("OK"))){ // Wait for schedule before reiterating
 					serverMsg = (String)in.readLine();
 				}
 				
 				iterate++;
 			}
 			
-			//dout.write(("SCHD " + 0 + " super-silk 0\n").getBytes());
-			
-			dout.write(("QUIT\n").getBytes());
+			dout.write(("QUIT\n").getBytes()); // Quit
 			dout.close();  
 			s.close();  
 			
