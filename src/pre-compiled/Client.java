@@ -21,6 +21,7 @@ import java.net.*;
 			System.out.println(str);
 			dout.flush();
 			
+			dout.write(("QUIT\n").getBytes());
 			dout.close();  
 			s.close();  
 			
