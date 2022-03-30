@@ -16,6 +16,11 @@ import java.net.*;
 			System.out.println(str);
 			dout.flush();  
 			
+			dout.write(("AUTH Edward\n").getBytes()); //Authentication
+			str = (String)in.readLine();
+			System.out.println(str);
+			dout.flush();
+			
 			dout.close();  
 			s.close();  
 			
