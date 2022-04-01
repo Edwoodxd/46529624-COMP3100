@@ -31,17 +31,15 @@ public class Client {
 				dout.write(("REDY\n").getBytes()); //Receive Job
 				serverMsg = (String)in.readLine();
 				System.out.println(serverMsg);
-				strings = serverMsg.split(" "); //Split into strings to to get values
+				strings = serverMsg.split(" "); 
 				
-				if(serverMsg.contains("JCPL")) {
-					while(serverMsg.contains("JCPL")) { //Check if JCPL or JOBN are received
-						dout.write(("REDY\n").getBytes());
-						serverMsg = (String)in.readLine();
-					}
-					strings = serverMsg.split(" ");
+				while(serverMsg.contains("JCPL")) { //Check if JCPL or JOBN are received
+					dout.write(("REDY\n").getBytes());
+					serverMsg = (String)in.readLine();
 				}
 				
 				if(serverMsg.contains("NONE")) { break; } //Break when no jobs left
+				strings = serverMsg.split(" "); //Split into strings to to get values
 				
 				dout.write(("GETS Capable " + strings[4] + " " + strings[5] + " " + strings[6] + "\n").getBytes()); //Checking available servers
 				serverMsg = (String)in.readLine();
