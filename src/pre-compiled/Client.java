@@ -7,6 +7,7 @@ import java.net.*;
 public class Client {  
     	public static  void main(String[] args) {
 	 	try{      
+	 		serverInfo si = new serverInfo();
 	    		int iterate = 0;
 	    		String[] strings;	
 	    		String serverMsg;
@@ -32,34 +33,39 @@ public class Client {
 				System.out.println(serverMsg);
 				strings = serverMsg.split(" "); //Split into strings to to get values
 				
-				while(serverMsg.contains("JCPL")) { //Check if JCPL or JOBN are received
-					dout.write(("REDY\n").getBytes());
-					serverMsg = (String)in.readLine();
+				if(serverMsg.contains("JCPL")) {
+					while(serverMsg.contains("JCPL")) { //Check if JCPL or JOBN are received
+						dout.write(("REDY\n").getBytes());
+						serverMsg = (String)in.readLine();
+					}
+					strings = serverMsg.split(" ");
 				}
+				
 				if(serverMsg.contains("NONE")) { break; } //Break when no jobs left
-				strings = serverMsg.split(" ");
+				
 				dout.write(("GETS Capable " + strings[4] + " " + strings[5] + " " + strings[6] + "\n").getBytes()); //Checking available servers
 				serverMsg = (String)in.readLine();
 				System.out.println(serverMsg);
 				
 				strings = serverMsg.split(" ");
 				nRecs = Integer.parseInt(strings[1]);
-				System.out.println(nRecs);
-				
+		
 				dout.write(("OK\n").getBytes());
-				serverMsg = (String)in.readLine();
-				System.out.println(serverMsg);
 				
-				
-				for(int i = 0; i < nRecs; i++){
-						
+				for(int i = 0; i < nRecs; i ++) { //Finding largest server
+					serverMsg = (String)in.readLine();
+					System.out.println(serverMsg);
+					strings = serverMsg.split(" ");
+					if(si.type == "UNTITLED" || Integer.parseInt(strings[4]) > si.cores) {
+						si = new serverInfo(strings[0], Integer.parseInt(strings[1]), Integer.parseInt(strings[4]), Integer.parseInt(strings[5]), Integer.parseInt(strings[6]));
+					}
 				}
 				
 				dout.write(("OK\n").getBytes());
 				serverMsg = (String)in.readLine();
 				System.out.println(serverMsg);
 				
-				dout.write(("SCHD " + iterate + " super-silk 0\n").getBytes()); //Schedule Job
+				dout.write(("SCHD" + iterate + " " + si.type + " " + si.id + "\n").getBytes()); //Schedule Job
 				serverMsg = (String)in.readLine();
 				System.out.println(serverMsg);
 				
@@ -78,14 +84,22 @@ public class Client {
 	}
 }  
 
-class serverInfo() {
+class serverInfo {
 	String type;
 	int id;
 	int cores;
 	int memory;
 	int disk;
 	
-	public void serverInfo(String type; int id; int cores; int memory; int disk){
+	public serverInfo() {
+		String type = "UNTITLED";
+		int id = 0;
+		int cores = 0;
+		int memory = 0;
+		int disk = 0;
+	}
+	
+	public serverInfo(String type, int id, int cores, int memory, int disk){
 		this.type = type;
 		this.id = id;
 		this.cores = cores;
@@ -93,6 +107,12 @@ class serverInfo() {
 		this.disk = disk;
 	}
 	
-	
+	public void print() {
+		System.out.println(type);
+		System.out.println(id);
+		System.out.println(cores);
+		System.out.println(memory);
+		System.out.println(disk);
+	}
 }
 
