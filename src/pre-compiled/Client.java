@@ -4,9 +4,9 @@ import java.net.*;
 //./ds-server -c ./ds-sample-config01.xml -v brief -n
 //./ds-server -c ./ds-sample-config01.xml -i
 
-	public class Client {  
-	    	public static void main(String[] args) {
-	    		try{      
+public class Client {  
+    	public static  void main(String[] args) {
+	 	try{      
 	    		int iterate = 0;
 	    		String[] strings;	
 	    		String serverMsg;
@@ -26,7 +26,7 @@ import java.net.*;
 			
 			
 			
-			while(serverMsg.contains("NONE")){
+			while(!(serverMsg.contains("NONE"))){
 				dout.write(("REDY\n").getBytes()); //Receive Job
 				serverMsg = (String)in.readLine();
 				System.out.println(serverMsg);
@@ -50,9 +50,10 @@ import java.net.*;
 				serverMsg = (String)in.readLine();
 				System.out.println(serverMsg);
 				
-				//for(int i = 0; i < nRecs; i++){
-					
-				//}
+				
+				for(int i = 0; i < nRecs; i++){
+						
+				}
 				
 				dout.write(("OK\n").getBytes());
 				serverMsg = (String)in.readLine();
@@ -76,3 +77,22 @@ import java.net.*;
 		}catch(Exception e){System.out.println(e);}  
 	}
 }  
+
+class serverInfo() {
+	String type;
+	int id;
+	int cores;
+	int memory;
+	int disk;
+	
+	public void serverInfo(String type; int id; int cores; int memory; int disk){
+		this.type = type;
+		this.id = id;
+		this.cores = cores;
+		this.memory = memory;
+		this.disk = disk;
+	}
+	
+	
+}
+
