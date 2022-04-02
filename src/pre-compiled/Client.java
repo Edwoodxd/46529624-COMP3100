@@ -22,7 +22,7 @@ public class Client {
 			serverMsg = (String)in.readLine();
 			System.out.println(serverMsg);
 			
-			dout.write(("AUTH Edward\n").getBytes()); //Authentication
+			dout.write(("AUTH edward\n").getBytes()); //Authentication
 			serverMsg = (String)in.readLine();
 			System.out.println(serverMsg);
 			
@@ -36,6 +36,7 @@ public class Client {
 				while(serverMsg.contains("JCPL")) { //Check if JCPL or JOBN are received
 					dout.write(("REDY\n").getBytes());
 					serverMsg = (String)in.readLine();
+					System.out.println(serverMsg);
 				}
 				
 				if(serverMsg.contains("NONE")) { break; } //Break when no jobs left
@@ -56,10 +57,12 @@ public class Client {
 					strings = serverMsg.split(" ");
 					if(si.type == "UNTITLED" || Integer.parseInt(strings[4]) > si.cores) {
 						si = new serverInfo(strings[0], Integer.parseInt(strings[1]), Integer.parseInt(strings[4]), Integer.parseInt(strings[5]), Integer.parseInt(strings[6]));
+						si.amount++;
 					} else if (si.type.equals(strings[0])) {
 						si.amount++; //Amount of servers of that type
 					}
 				}
+				
 				System.out.println(si.amount);
 				
 				dout.write(("OK\n").getBytes());
@@ -67,6 +70,7 @@ public class Client {
 				System.out.println(serverMsg);
 				
 				dout.write(("SCHD " + iterate + " " + si.type + " " + iterate % si.amount + "\n").getBytes()); //Schedule Job
+				
 				serverMsg = (String)in.readLine();
 				System.out.println(serverMsg);
 				
@@ -78,7 +82,11 @@ public class Client {
 				si.amount = 0;
 			}
 			
+
 			dout.write(("QUIT\n").getBytes()); // Quit
+			serverMsg = (String)in.readLine();
+			System.out.println(serverMsg);
+			
 			dout.close();  
 			s.close();  
 			
