@@ -3,7 +3,7 @@ import java.net.*;
 
 //./ds-server -c ./ds-sample-config01.xml -v brief -n
 //./ds-server -c ./ds-sample-config01.xml -i
-//test
+//./demoS1.sh Client.class -n
 
 public class Client {  
     	public static  void main(String[] args) {
@@ -31,8 +31,7 @@ public class Client {
 			while(!(serverMsg.contains("NONE"))){
 				dout.write(("REDY\n").getBytes()); //Receive Job
 				serverMsg = (String)in.readLine();
-				System.out.println(serverMsg);
-				strings = serverMsg.split(" "); 
+				System.out.println(serverMsg); 
 				
 				while(serverMsg.contains("JCPL")) { //Check if JCPL or JOBN are received
 					dout.write(("REDY\n").getBytes());
@@ -57,14 +56,17 @@ public class Client {
 					strings = serverMsg.split(" ");
 					if(si.type == "UNTITLED" || Integer.parseInt(strings[4]) > si.cores) {
 						si = new serverInfo(strings[0], Integer.parseInt(strings[1]), Integer.parseInt(strings[4]), Integer.parseInt(strings[5]), Integer.parseInt(strings[6]));
+					} else if (si.type.equals(strings[0])) {
+						si.amount++; //Amount of servers of that type
 					}
 				}
+				System.out.println(si.amount);
 				
 				dout.write(("OK\n").getBytes());
 				serverMsg = (String)in.readLine();
 				System.out.println(serverMsg);
 				
-				dout.write(("SCHD" + iterate + " " + si.type + " " + si.id + "\n").getBytes()); //Schedule Job
+				dout.write(("SCHD " + iterate + " " + si.type + " " + iterate % si.amount + "\n").getBytes()); //Schedule Job
 				serverMsg = (String)in.readLine();
 				System.out.println(serverMsg);
 				
@@ -73,6 +75,7 @@ public class Client {
 				}
 				
 				iterate++;
+				si.amount = 0;
 			}
 			
 			dout.write(("QUIT\n").getBytes()); // Quit
@@ -89,6 +92,7 @@ class serverInfo {
 	int cores;
 	int memory;
 	int disk;
+	int amount;
 	
 	public serverInfo() {
 		String type = "UNTITLED";
@@ -96,6 +100,7 @@ class serverInfo {
 		int cores = 0;
 		int memory = 0;
 		int disk = 0;
+		int amount = 0;
 	}
 	
 	public serverInfo(String type, int id, int cores, int memory, int disk){

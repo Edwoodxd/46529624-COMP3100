@@ -1,0 +1,6 @@
+6,7c6,7
+< RCVD AUTH edward
+< # Welcome  edward!
+---
+> RCVD AUTH Edward
+> # Welcome  Edward!
