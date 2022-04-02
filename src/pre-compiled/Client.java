@@ -3,6 +3,7 @@ import java.net.*;
 
 //./ds-server -c ./ds-sample-config01.xml -v brief -n
 //./ds-server -c ./ds-sample-config01.xml -i
+//test
 
 public class Client {  
     	public static  void main(String[] args) {
