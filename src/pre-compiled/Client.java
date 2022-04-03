@@ -4,12 +4,13 @@ import java.net.*;
 //./ds-server -c ./ds-sample-config01.xml -v brief -n
 //./ds-server -c ./ds-sample-config01.xml -i
 //./demoS1.sh Client.class -n
+//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
 
 public class Client {  
     	public static  void main(String[] args) {
 	 	try{      
-	 		serverInfo si = new serverInfo();
-	    		int iterate = 0;
+	 		largestServer ls = new largestServer();
+	    		int jobID = 0;
 	    		String[] strings;	
 	    		String serverMsg;
 	    		Integer nRecs;
@@ -55,21 +56,21 @@ public class Client {
 					serverMsg = (String)in.readLine();
 					System.out.println(serverMsg);
 					strings = serverMsg.split(" ");
-					if(si.type == "UNTITLED" || Integer.parseInt(strings[4]) > si.cores) {
-						si = new serverInfo(strings[0], Integer.parseInt(strings[1]), Integer.parseInt(strings[4]), Integer.parseInt(strings[5]), Integer.parseInt(strings[6]));
-						si.amount++;
-					} else if (si.type.equals(strings[0])) {
-						si.amount++; //Amount of servers of that type
+					if(ls.type == "UNTITLED" || Integer.parseInt(strings[4]) > ls.cores) {
+						ls = new largestServer(strings[0], Integer.parseInt(strings[1]), Integer.parseInt(strings[4]), Integer.parseInt(strings[5]), Integer.parseInt(strings[6]));
+						ls.amount = 1;
+					} else if (ls.type.equals(strings[0])) {
+						ls.amount++; //Amount of servers of that type
 					}
 				}
 				
-				System.out.println(si.amount);
+				System.out.println(ls.amount);
 				
 				dout.write(("OK\n").getBytes());
 				serverMsg = (String)in.readLine();
 				System.out.println(serverMsg);
 				
-				dout.write(("SCHD " + iterate + " " + si.type + " " + iterate % si.amount + "\n").getBytes()); //Schedule Job
+				dout.write(("SCHD " + jobID + " " + ls.type + " " + jobID % ls.amount + "\n").getBytes()); //Schedule Job
 				
 				serverMsg = (String)in.readLine();
 				System.out.println(serverMsg);
@@ -78,8 +79,8 @@ public class Client {
 					serverMsg = (String)in.readLine();
 				}
 				
-				iterate++;
-				si.amount = 0;
+				jobID++;
+				ls.amount = 0;
 			}
 			
 
@@ -87,6 +88,7 @@ public class Client {
 			serverMsg = (String)in.readLine();
 			System.out.println(serverMsg);
 			
+			dout.flush();
 			dout.close();  
 			s.close();  
 			
@@ -94,7 +96,7 @@ public class Client {
 	}
 }  
 
-class serverInfo {
+class largestServer {
 	String type;
 	int id;
 	int cores;
@@ -102,7 +104,7 @@ class serverInfo {
 	int disk;
 	int amount;
 	
-	public serverInfo() {
+	public largestServer() {
 		String type = "UNTITLED";
 		int id = 0;
 		int cores = 0;
@@ -111,7 +113,7 @@ class serverInfo {
 		int amount = 0;
 	}
 	
-	public serverInfo(String type, int id, int cores, int memory, int disk){
+	public largestServer(String type, int id, int cores, int memory, int disk){
 		this.type = type;
 		this.id = id;
 		this.cores = cores;
