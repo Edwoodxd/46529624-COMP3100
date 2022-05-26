@@ -9,9 +9,12 @@ import java.net.*;
 public class Client {  
     	public static  void main(String[] args) {
 	 	try{      
-	 		largestServer ls = new largestServer();
+	 		Server cs = new Server();
+	 		Server fs = new Server();
 	    		int jobID = 0;
+	    		int waitAmount = 0;
 	    		String[] strings;	
+	    		String[] jobn;
 	    		String serverMsg;
 	    		Integer nRecs;
 	    		
@@ -21,72 +24,73 @@ public class Client {
 			
 			dout.write(("HELO\n").getBytes()); //Sending HELO to server
 			serverMsg = (String)in.readLine();
-			System.out.println(serverMsg);
+			//System.out.println(serverMsg);
 			
 			dout.write(("AUTH edward\n").getBytes()); //Authentication
 			serverMsg = (String)in.readLine();
-			System.out.println(serverMsg);
+			//System.out.println(serverMsg);
 			
 			
 			
 			while(!(serverMsg.contains("NONE"))){
 				dout.write(("REDY\n").getBytes()); //Receive Job
 				serverMsg = (String)in.readLine();
-				System.out.println(serverMsg); 
+				//System.out.println(serverMsg); 
 				
 				while(serverMsg.contains("JCPL")) { //Check if JCPL or JOBN are received
 					dout.write(("REDY\n").getBytes());
 					serverMsg = (String)in.readLine();
-					System.out.println(serverMsg);
+					//System.out.println(serverMsg);
 				}
 				
 				if(serverMsg.contains("NONE")) { break; } //Break when no jobs left
-				strings = serverMsg.split(" "); //Split into strings to to get values
+				jobn = serverMsg.split(" "); //Split into strings to to get values
 				
-				dout.write(("GETS Capable " + strings[4] + " " + strings[5] + " " + strings[6] + "\n").getBytes()); //Checking available servers
+				dout.write(("GETS Capable " + jobn[4] + " " + jobn[5] + " " + jobn[6] + "\n").getBytes()); //Checking available servers
 				serverMsg = (String)in.readLine();
-				System.out.println(serverMsg);
+				//System.out.println(serverMsg);
 				
 				strings = serverMsg.split(" ");
 				nRecs = Integer.parseInt(strings[1]);
 		
 				dout.write(("OK\n").getBytes());
 				
-				for(int i = 0; i < nRecs; i ++) { //Finding largest server
-					serverMsg = (String)in.readLine();
-					System.out.println(serverMsg);
+				for(int i = 0; i < nRecs; i ++) { //Finding capable server
+					serverMsg = (String)in.readLine();  //juju 0 active 120 0 2500 13100 1 0
+					//System.out.println(serverMsg);
 					strings = serverMsg.split(" ");
-					if(ls.type == "UNTITLED" || Integer.parseInt(strings[4]) > ls.cores) {
-						ls = new largestServer(strings[0], Integer.parseInt(strings[1]), Integer.parseInt(strings[4]), Integer.parseInt(strings[5]), Integer.parseInt(strings[6]));
-						ls.amount = 1;
-					} else if (ls.type.equals(strings[0])) {
-						ls.amount++; //Amount of servers of that type
+					
+					if((cs.type == "UNTITLED" || Integer.parseInt(strings[7]) == 0 || Integer.parseInt(strings[8]) == 0) && Integer.parseInt(jobn[4]) + 1 <= Integer.parseInt(strings[4])) {
+						cs = new Server(strings[0], Integer.parseInt(strings[1]), Integer.parseInt(strings[4]), Integer.parseInt(strings[5]), Integer.parseInt(strings[6]));
+						break;
 					}
+					if(i == nRecs - 1){
+						cs = fs;
+						break;
+					} 
 				}
 				
-				System.out.println(ls.amount);
 				
 				dout.write(("OK\n").getBytes());
 				serverMsg = (String)in.readLine();
-				System.out.println(serverMsg);
+				//System.out.println(serverMsg);
 				
-				dout.write(("SCHD " + jobID + " " + ls.type + " " + jobID % ls.amount + "\n").getBytes()); //Schedule Job
+				dout.write(("SCHD " + jobID + " " + cs.type + " " + cs.id + "\n").getBytes()); //Schedule Job
 				
 				serverMsg = (String)in.readLine();
-				System.out.println(serverMsg);
+				//System.out.println(serverMsg);
 				
 				while(!(serverMsg.contains("OK"))){ // Wait for schedule before reiterating
 					serverMsg = (String)in.readLine();
 				}
 				
 				jobID++;
-				ls.amount = 0;
 			}
 			
 
 			dout.write(("QUIT\n").getBytes()); // Quit
 			serverMsg = (String)in.readLine();
-			System.out.println(serverMsg);
+			//System.out.println(serverMsg);
 			
 			dout.flush();
 			dout.close();  
@@ -96,15 +100,14 @@ public class Client {
 	}
 }  
 
-class largestServer {
+class Server {
 	String type;
 	int id;
 	int cores;
 	int memory;
 	int disk;
-	int amount;
 	
-	public largestServer() {
+	public Server() {
 		String type = "UNTITLED";
 		int id = 0;
 		int cores = 0;
@@ -113,7 +116,7 @@ class largestServer {
 		int amount = 0;
 	}
 	
-	public largestServer(String type, int id, int cores, int memory, int disk){
+	public Server(String type, int id, int cores, int memory, int disk){
 		this.type = type;
 		this.id = id;
 		this.cores = cores;
@@ -121,12 +124,5 @@ class largestServer {
 		this.disk = disk;
 	}
 	
-	public void print() {
-		System.out.println(type);
-		System.out.println(id);
-		System.out.println(cores);
-		System.out.println(memory);
-		System.out.println(disk);
-	}
 }
 
