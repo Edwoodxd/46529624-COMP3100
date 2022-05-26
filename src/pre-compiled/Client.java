@@ -59,7 +59,9 @@ public class Client {
 					serverMsg = (String)in.readLine();  //juju 0 active 120 0 2500 13100 1 0
 					//System.out.println(serverMsg);
 					strings = serverMsg.split(" ");
-					
+					if(i == 0){
+						fs = new Server(strings[0], Integer.parseInt(strings[1]), Integer.parseInt(strings[4]), Integer.parseInt(strings[5]), Integer.parseInt(strings[6])); 
+					}
 					if((cs.type == "UNTITLED" || Integer.parseInt(strings[7]) == 0 || Integer.parseInt(strings[8]) == 0) && Integer.parseInt(jobn[4]) + 1 <= Integer.parseInt(strings[4])) {
 						cs = new Server(strings[0], Integer.parseInt(strings[1]), Integer.parseInt(strings[4]), Integer.parseInt(strings[5]), Integer.parseInt(strings[6]));
 						break;
