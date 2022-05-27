@@ -9,9 +9,9 @@ import java.net.*;
 public class Client {  
     	public static  void main(String[] args) {
 	 	try{      
-	 		Server cs = new Server();
-	 		Server fs = new Server();
-	 		Server ls = new Server();
+	 		Server cs = new Server(); //Current server
+	 		Server fs = new Server(); //First server
+	 		Server ls = new Server(); //Last server
 	    		int jobID = 0;
 	    		String[] strings;	
 	    		String[] jobn;
@@ -51,18 +51,18 @@ public class Client {
 				dout.write(("OK\n").getBytes());
 				
 				for(int i = 0; i < nRecs; i ++) { //Finding capable server
-					serverMsg = (String)in.readLine();  //juju 0 active 120 0 2500 13100 1 0
+					serverMsg = (String)in.readLine();
 					strings = serverMsg.split(" ");
-					if(i == 0){
+					if(i == 0){ //initialize first server
 						fs = new Server(strings[0], Integer.parseInt(strings[1]), Integer.parseInt(strings[4]), Integer.parseInt(strings[5]), Integer.parseInt(strings[6])); 
 					}
-					if((cs.type == "UNTITLED" || Integer.parseInt(strings[7]) == 0 || Integer.parseInt(strings[8]) == 0) && Integer.parseInt(jobn[4]) <= Integer.parseInt(strings[4])) {
+					if((cs.type == "UNTITLED" || Integer.parseInt(strings[7]) == 0 || Integer.parseInt(strings[8]) == 0) && Integer.parseInt(jobn[4]) <= Integer.parseInt(strings[4])) { //initialize current server
 						cs = new Server(strings[0], Integer.parseInt(strings[1]), Integer.parseInt(strings[4]), Integer.parseInt(strings[5]), Integer.parseInt(strings[6]));
 						break;
 					}
-					if(i == nRecs - 1){
+					if(i == nRecs - 1){ //initialize last server
 						ls = new Server(strings[0], Integer.parseInt(strings[1]), Integer.parseInt(strings[4]), Integer.parseInt(strings[5]), Integer.parseInt(strings[6]));
-						if(jobID % 2 == 0){
+						if(jobID % 2 == 0){ //use modulo for consistent turnaround time and rental cost
 							cs = fs;
 						}else{
 							cs = ls;
