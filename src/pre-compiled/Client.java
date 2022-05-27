@@ -24,23 +24,19 @@ public class Client {
 			
 			dout.write(("HELO\n").getBytes()); //Sending HELO to server
 			serverMsg = (String)in.readLine();
-			//System.out.println(serverMsg);
 			
 			dout.write(("AUTH edward\n").getBytes()); //Authentication
 			serverMsg = (String)in.readLine();
-			//System.out.println(serverMsg);
 			
 			
 			
 			while(!(serverMsg.contains("NONE"))){
 				dout.write(("REDY\n").getBytes()); //Receive Job
 				serverMsg = (String)in.readLine();
-				//System.out.println(serverMsg); 
 				
 				while(serverMsg.contains("JCPL")) { //Check if JCPL or JOBN are received
 					dout.write(("REDY\n").getBytes());
 					serverMsg = (String)in.readLine();
-					//System.out.println(serverMsg);
 				}
 				
 				if(serverMsg.contains("NONE")) { break; } //Break when no jobs left
@@ -48,7 +44,6 @@ public class Client {
 				
 				dout.write(("GETS Capable " + jobn[4] + " " + jobn[5] + " " + jobn[6] + "\n").getBytes()); //Checking available servers
 				serverMsg = (String)in.readLine();
-				//System.out.println(serverMsg);
 				
 				strings = serverMsg.split(" ");
 				nRecs = Integer.parseInt(strings[1]);
@@ -57,7 +52,6 @@ public class Client {
 				
 				for(int i = 0; i < nRecs; i ++) { //Finding capable server
 					serverMsg = (String)in.readLine();  //juju 0 active 120 0 2500 13100 1 0
-					//System.out.println(serverMsg);
 					strings = serverMsg.split(" ");
 					if(i == 0){
 						fs = new Server(strings[0], Integer.parseInt(strings[1]), Integer.parseInt(strings[4]), Integer.parseInt(strings[5]), Integer.parseInt(strings[6])); 
@@ -84,7 +78,6 @@ public class Client {
 				dout.write(("SCHD " + jobID + " " + cs.type + " " + cs.id + "\n").getBytes()); //Schedule Job
 				
 				serverMsg = (String)in.readLine();
-				//System.out.println(serverMsg);
 				
 				while(!(serverMsg.contains("OK"))){ // Wait for schedule before reiterating
 					serverMsg = (String)in.readLine();
@@ -96,7 +89,6 @@ public class Client {
 
 			dout.write(("QUIT\n").getBytes()); // Quit
 			serverMsg = (String)in.readLine();
-			//System.out.println(serverMsg);
 			
 			dout.flush();
 			dout.close();  
