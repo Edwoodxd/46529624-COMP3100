@@ -4,15 +4,15 @@ import java.net.*;
 //./ds-server -c ./ds-sample-config01.xml -v brief -n
 //./ds-server -c ./ds-sample-config01.xml -i
 //./demoS1.sh Client.class -n
-//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
+//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
 
 public class Client {  
     	public static  void main(String[] args) {
 	 	try{      
 	 		Server cs = new Server();
 	 		Server fs = new Server();
+	 		Server ls = new Server();
 	    		int jobID = 0;
-	    		int waitAmount = 0;
 	    		String[] strings;	
 	    		String[] jobn;
 	    		String serverMsg;
@@ -62,12 +62,17 @@ public class Client {
 					if(i == 0){
 						fs = new Server(strings[0], Integer.parseInt(strings[1]), Integer.parseInt(strings[4]), Integer.parseInt(strings[5]), Integer.parseInt(strings[6])); 
 					}
-					if((cs.type == "UNTITLED" || Integer.parseInt(strings[7]) == 0 || Integer.parseInt(strings[8]) == 0) && Integer.parseInt(jobn[4]) + 1 <= Integer.parseInt(strings[4])) {
+					if((cs.type == "UNTITLED" || Integer.parseInt(strings[7]) == 0 || Integer.parseInt(strings[8]) == 0) && Integer.parseInt(jobn[4]) <= Integer.parseInt(strings[4])) {
 						cs = new Server(strings[0], Integer.parseInt(strings[1]), Integer.parseInt(strings[4]), Integer.parseInt(strings[5]), Integer.parseInt(strings[6]));
 						break;
 					}
 					if(i == nRecs - 1){
-						cs = fs;
+						ls = new Server(strings[0], Integer.parseInt(strings[1]), Integer.parseInt(strings[4]), Integer.parseInt(strings[5]), Integer.parseInt(strings[6]));
+						if(jobID % 2 == 0){
+							cs = fs;
+						}else{
+							cs = ls;
+						}
 						break;
 					} 
 				}
@@ -75,7 +80,6 @@ public class Client {
 				
 				dout.write(("OK\n").getBytes());
 				serverMsg = (String)in.readLine();
-				//System.out.println(serverMsg);
 				
 				dout.write(("SCHD " + jobID + " " + cs.type + " " + cs.id + "\n").getBytes()); //Schedule Job
 				
