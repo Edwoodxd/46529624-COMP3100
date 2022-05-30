@@ -1,11 +1,6 @@
 import java.io.*;
 import java.net.*;  
 
-//./ds-server -c ./ds-sample-config01.xml -v brief -n
-//./ds-server -c ./ds-sample-config01.xml -i
-//./demoS1.sh Client.class -n
-//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
-
 public class Client {  
     	public static  void main(String[] args) {
 	 	try{      
@@ -27,8 +22,6 @@ public class Client {
 			
 			dout.write(("AUTH edward\n").getBytes()); //Authentication
 			serverMsg = (String)in.readLine();
-			
-			
 			
 			while(!(serverMsg.contains("NONE"))){
 				dout.write(("REDY\n").getBytes()); //Receive Job
@@ -70,8 +63,6 @@ public class Client {
 						break;
 					} 
 				}
-				
-				
 				dout.write(("OK\n").getBytes());
 				serverMsg = (String)in.readLine();
 				
@@ -82,10 +73,8 @@ public class Client {
 				while(!(serverMsg.contains("OK"))){ // Wait for schedule before reiterating
 					serverMsg = (String)in.readLine();
 				}
-				
 				jobID++;
 			}
-			
 
 			dout.write(("QUIT\n").getBytes()); // Quit
 			serverMsg = (String)in.readLine();
@@ -93,7 +82,6 @@ public class Client {
 			dout.flush();
 			dout.close();  
 			s.close();  
-			
 		}catch(Exception e){System.out.println(e);}  
 	}
 }  
